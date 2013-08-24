@@ -1,0 +1,27 @@
+apply plugin: 'groovy'
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+apply plugin: 'application'
+
+sourceCompatibility = 1.8
+
+repositories {
+    flatDir name: 'leap', dir: 'leaplib'
+    mavenLocal()
+    mavenCentral()
+
+}
+
+dependencies {
+    compile 'leap:LeapJava'
+    runtime 'leap:libLeap@dylib'
+    runtime 'leap:libLeapJava@dylib'
+
+    compile 'org.slf4j:slf4j-api:1.7.5'
+    compile 'org.slf4j:slf4j-simple:1.7.5'
+
+    compile 'org.twitter4j:twitter4j-core:[3.0,)'
+}
+
+mainClassName="org.outrospective.leap.twitter.AreYouListeningLeap"
+
