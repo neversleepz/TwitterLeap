@@ -15,7 +15,7 @@ public class TweetReader {
         list.forEach( st -> System.out.printf("%s - %s\n", st.getUser().getName(), st.getText()) );
     }
 
-    private static ResponseList<Status> getMelbjvmTweets() throws TwitterException {
+    public static ResponseList<Status> getMelbjvmTweets() throws TwitterException {
         return twitter.getUserTimeline("melbjvm");
     }
 }

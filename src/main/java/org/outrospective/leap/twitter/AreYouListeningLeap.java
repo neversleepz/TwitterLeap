@@ -1,6 +1,8 @@
 package org.outrospective.leap.twitter;
 
 import com.leapmotion.leap.Controller;
+import org.outrospective.leap.twitter.listeners.LoggingListener;
+import org.outrospective.leap.twitter.listeners.TwitterListener;
 
 import java.io.IOException;
 
@@ -10,8 +12,8 @@ import java.io.IOException;
  * Time: 2:42 AM
  */
 public class AreYouListeningLeap {
-    private final LoggingListener listener = new LoggingListener();
-    Controller controller = new Controller(listener);
+//    private final LoggingListener listener = new LoggingListener();
+    Controller controller = new Controller();
 
     public static void main(String[] args) {
         new AreYouListeningLeap().go();
@@ -20,7 +22,10 @@ public class AreYouListeningLeap {
 
     private void go() {
         // Have the sample listener receive events from the controller
-        controller.addListener(listener);
+//        controller.addListener(listener);
+        TwitterListener twitterListener = new TwitterListener();
+        controller.addListener(twitterListener);
+
 
         // Keep this process running until Enter is pressed
         System.out.println("Press Enter to quit...");
@@ -31,6 +36,6 @@ public class AreYouListeningLeap {
         }
 
         // Remove the sample listener when done
-        controller.removeListener(listener);
+//        controller.removeListener(twitterListener);
     }
 }

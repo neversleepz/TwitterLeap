@@ -1,4 +1,4 @@
-package org.outrospective.leap.twitter;
+package org.outrospective.leap.twitter.listeners;
 
 import com.leapmotion.leap.*;
 import org.slf4j.Logger;
@@ -40,11 +40,12 @@ public class LoggingListener extends Listener {
     public void onExit(Controller controller) {
         logger.info("Leap has been detached");
         super.onExit(controller);
+        controller.removeListener(this);
     }
 
     @Override
     public void onFrame(Controller controller) {
-//        logger.info("A frame of motion is ready ot consume");
+//        logger.info("A frame of motion is ready to consume");
         super.onFrame(controller);
 
         Frame frame = controller.frame();
