@@ -35,7 +35,7 @@ public class AreYouListeningLeap {
             e.printStackTrace();
         }
 
-        // Remove the sample listener when done
-//        controller.removeListener(twitterListener);
+//        Remove the sample listener when done
+        controller.removeListener(twitterListener);
     }
 }

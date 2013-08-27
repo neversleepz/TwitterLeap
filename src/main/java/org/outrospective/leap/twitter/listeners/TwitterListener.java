@@ -10,6 +10,7 @@ import twitter4j.TwitterException;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Optional;
 
 import static java.lang.Math.abs;
@@ -26,11 +27,14 @@ public class TwitterListener extends Listener {
 
     private ResponseList<Status> melbjvmTweets;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private ListIterator<Status> tweeterator;
+    private ThreadLocal<Integer> maxId = new ThreadLocal<>();
 
     @Override
     public void onInit(Controller controller) {
         try {
             melbjvmTweets = TweetReader.getMelbjvmTweets();
+            tweeterator = melbjvmTweets.listIterator();
             logger.debug("Retrieved {} tweets", melbjvmTweets.size());
         } catch (TwitterException e) {
             logger.error("Exception hitting twitter", e);
@@ -51,7 +55,7 @@ public class TwitterListener extends Listener {
             GestureList gestures = frame.gestures();
             logger.trace("gestures received: {} in frame {}", gestures.count(), frame.id());
             for (Gesture gesture : gestures) {
-                if (gesture.isValid() && gesture.type() == Gesture.Type.TYPE_SWIPE) {
+                if (gesture.isValid() && gesture.type() == Gesture.Type.TYPE_SWIPE && gesture.state() == Gesture.State.STATE_STOP) {
                     SwipeGesture sg = new SwipeGesture(gesture);
                     Vector direction = sg.direction();
 
@@ -63,7 +67,26 @@ public class TwitterListener extends Listener {
                     logger.trace("Vector.forward().dot(direction)  "+Vector.forward().dot(direction));
                     logger.trace("Vector.backward().dot(direction) "+Vector.backward().dot(direction) +"\n");
 
-                    logger.info(gesture.id() + ": I think you are swiping "+ guess(direction) + " " + direction);
+                    String dir = guess(direction);
+                    logger.info(gesture.id() + " ("+ gesture.state()+"): I think you are swiping "+ dir + " " + direction);
+
+                    if (dir.equals("left") || dir.equals("up")) {
+                        if (tweeterator.hasPrevious()) {
+                            Status previous = tweeterator.previous();
+                            logger.info("Previous Tweet: " + previous.getId() + " " + previous.getUser().getScreenName() + " - " + previous.getText());
+                        } else {
+                            logger.info("Beginning of tweets");
+                        }
+                    } else if (dir.equals("right") || dir.equals("down")) {
+                        if (tweeterator.hasNext()) {
+                            Status next = tweeterator.next();
+                            logger.info("Next tweet: " + next.getId() + " " + next.getUser().getScreenName()  + " - " + next.getText());
+                        } else {
+                            logger.info("End of tweets");
+                        }
+                    }
+
+
                 }
             }
         }
@@ -78,7 +101,7 @@ public class TwitterListener extends Listener {
         Optional<Float> max = floats.stream().max(naturalOrder());
         int largestComponent = floats.indexOf(max.get());
 
-        //
+        // use the magnitude to determine the direction of the swipe
         switch (largestComponent) {
             case 0:
                 return fromArray[0] < 0 ? "left" : "right";
