@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane id="AnchorPane" fx:id="stage" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="562.0" prefWidth="986.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.outrospective.leap.twitter.jfx.TwitterController">
+  <children>
+    <Group id="Group1" layoutX="14.0" layoutY="16.0" />
+    <HBox fx:id="tweet1" layoutX="14.0" layoutY="15.0" prefHeight="100.0" prefWidth="949.0">
+      <children>
+        <VBox id="AvatarHandle1" alignment="CENTER" spacing="5.0">
+          <children>
+            <ImageView fx:id="avatar1" fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true" scaleY="1.0" scaleZ="1.0" styleClass="tweetAvatar" translateX="0.0" translateZ="0.0">
+              <image>
+                <Image url="file:/Volumes/Data/Pictures/Photo%20on%202011-07-26%20at%2023.10.jpg" />
+              </image>
+            </ImageView>
+            <Hyperlink fx:id="handle1" text="\@neversleepz" underline="false" visited="true">
+              <font>
+                <Font size="10.0" fx:id="x1" />
+              </font>
+            </Hyperlink>
+          </children>
+        </VBox>
+        <Label fx:id="tweettext1" alignment="BASELINE_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="100.0" prefHeight="-1.0" prefWidth="-1.0" text="This is my tweet" textAlignment="LEFT" wrapText="true" HBox.hgrow="ALWAYS" />
+      </children>
+    </HBox>
+    <HBox fx:id="tweet2" layoutX="14.0" layoutY="116.0" prefHeight="100.0" prefWidth="949.0">
+      <children>
+        <VBox id="AvatarHandle1" alignment="CENTER" spacing="5.0">
+          <children>
+            <ImageView fx:id="avatar2" fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true" scaleY="1.0" scaleZ="1.0" styleClass="tweetAvatar" translateX="0.0" translateZ="0.0">
+              <image>
+                <Image url="file:/Volumes/Data/Pictures/Photo%20on%202011-07-26%20at%2023.10.jpg" />
+              </image>
+            </ImageView>
+            <Hyperlink fx:id="handle2" font="$x1" text="\@neversleepz" underline="false" visited="true" />
+          </children>
+        </VBox>
+        <Label fx:id="tweettext2" alignment="BASELINE_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="100.0" prefHeight="-1.0" prefWidth="-1.0" style="-fx-background-color:lightgrey&#10;&#10;" text="This is another tweet" textAlignment="LEFT" wrapText="true" HBox.hgrow="ALWAYS" />
+      </children>
+    </HBox>
+    <HBox id="tweet1" fx:id="tweet3" layoutX="14.0" layoutY="216.0" prefHeight="100.0" prefWidth="949.0">
+      <children>
+        <VBox id="AvatarHandle1" alignment="CENTER" spacing="5.0">
+          <children>
+            <ImageView id="avatar1" fx:id="avatar3" fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true" scaleY="1.0" scaleZ="1.0" styleClass="tweetAvatar" translateX="0.0" translateZ="0.0">
+              <image>
+                <Image url="file:/Volumes/Data/Pictures/Photo%20on%202011-07-26%20at%2023.10.jpg" />
+              </image>
+            </ImageView>
+            <Hyperlink id="handle1" fx:id="handle3" font="$x1" text="\@neversleepz" underline="false" visited="true" />
+          </children>
+        </VBox>
+        <Label id="tweettext1" fx:id="tweettext3" alignment="BASELINE_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="100.0" prefHeight="-1.0" prefWidth="-1.0" text="This is my tweet" textAlignment="LEFT" wrapText="true" HBox.hgrow="ALWAYS" />
+      </children>
+    </HBox>
+    <HBox id="tweet2" fx:id="tweet4" layoutX="14.0" layoutY="317.0" prefHeight="100.0" prefWidth="949.0">
+      <children>
+        <VBox id="AvatarHandle1" alignment="CENTER" spacing="5.0">
+          <children>
+            <ImageView id="avatar2" fx:id="avatar4" fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true" scaleY="1.0" scaleZ="1.0" styleClass="tweetAvatar" translateX="0.0" translateZ="0.0">
+              <image>
+                <Image url="file:/Volumes/Data/Pictures/Photo%20on%202011-07-26%20at%2023.10.jpg" />
+              </image>
+            </ImageView>
+            <Hyperlink id="handle2" fx:id="handle4" font="$x1" text="\@neversleepz" underline="false" visited="true" />
+          </children>
+        </VBox>
+        <Label id="tweettext2" fx:id="tweettext4" alignment="BASELINE_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="100.0" prefHeight="-1.0" prefWidth="-1.0" style="-fx-background-color:lightgrey&#10;&#10;" text="This is another tweet" textAlignment="LEFT" wrapText="true" HBox.hgrow="ALWAYS" />
+      </children>
+    </HBox>
+  </children>
+</AnchorPane>
