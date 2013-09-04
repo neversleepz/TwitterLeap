@@ -24,7 +24,7 @@ public class Main extends Application {
         TwitterController twitterController = fxmlLoader.getController();
         twitterListener.setJavafxController(twitterController);
         primaryStage.setTitle("MelbJVM Tweets");
-        primaryStage.setScene(new Scene(root, 710, 440));
+        primaryStage.setScene(new Scene(root, 710, 480));
         primaryStage.show();
 
     }

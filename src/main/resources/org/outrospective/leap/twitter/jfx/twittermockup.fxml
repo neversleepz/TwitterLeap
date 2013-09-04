@@ -9,7 +9,7 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane id="AnchorPane" fx:id="stage" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="431.0" prefWidth="703.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.outrospective.leap.twitter.jfx.TwitterController">
+<AnchorPane id="AnchorPane" fx:id="stage" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="467.0" prefWidth="703.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.outrospective.leap.twitter.jfx.TwitterController">
   <children>
     <Group id="Group1" layoutX="14.0" layoutY="16.0" />
     <HBox fx:id="tweet1" layoutX="14.0" layoutY="15.0" prefHeight="100.0" prefWidth="949.0">
@@ -76,5 +76,7 @@
         <Label id="tweettext2" fx:id="tweettext4" alignment="BASELINE_CENTER" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minHeight="100.0" prefHeight="-1.0" prefWidth="600.0" style="-fx-background-color:lightgrey&#10;&#10;" text="This is the last tweet" textAlignment="LEFT" wrapText="true" HBox.hgrow="ALWAYS" />
       </children>
     </HBox>
+    <ProgressIndicator id="progress" fx:id="pageProgress" layoutX="653.0" layoutY="420.0" progress="0.0" />
+    <Slider fx:id="slider" layoutX="19.0" layoutY="426.0" majorTickUnit="1.0" max="20.0" prefWidth="600.0" showTickMarks="true" snapToTicks="true" />
   </children>
 </AnchorPane>

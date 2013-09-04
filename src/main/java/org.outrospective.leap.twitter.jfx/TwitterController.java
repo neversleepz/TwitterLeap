@@ -8,6 +8,9 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.Slider;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -18,9 +21,7 @@ import twitter4j.Status;
 import twitter4j.TwitterException;
 
 import java.net.URL;
-import java.util.Arrays;
-import java.util.ListIterator;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -57,6 +58,12 @@ public class TwitterController {
     @FXML // fx:id="handle4"
     private Hyperlink handle4; // Value injected by FXMLLoader
 
+    @FXML
+    private ProgressIndicator pageProgress;
+
+    @FXML
+    private Slider slider;
+
     @FXML // fx:id="stage"
     private AnchorPane stage; // Value injected by FXMLLoader
 
@@ -91,6 +98,7 @@ public class TwitterController {
     private ListIterator<Label> tweetTexts;
 
     private ListIterator<Status> tweetIterator;
+    private float totalTweets;
 
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
@@ -103,6 +111,8 @@ public class TwitterController {
         assert handle2 != null : "fx:id=\"handle2\" was not injected: check your FXML file 'twittermockup.fxml'.";
         assert handle3 != null : "fx:id=\"handle3\" was not injected: check your FXML file 'twittermockup.fxml'.";
         assert handle4 != null : "fx:id=\"handle4\" was not injected: check your FXML file 'twittermockup.fxml'.";
+        assert pageProgress != null : "fx:id=\"pageProgress\" was not injected: check your FXML file 'twittermockup.fxml'.";
+        assert slider != null : "fx:id=\"slider\" was not injected: check your FXML file 'twittermockup.fxml'.";
         assert stage != null : "fx:id=\"stage\" was not injected: check your FXML file 'twittermockup.fxml'.";
         assert tweet1 != null : "fx:id=\"tweet1\" was not injected: check your FXML file 'twittermockup.fxml'.";
         assert tweet2 != null : "fx:id=\"tweet2\" was not injected: check your FXML file 'twittermockup.fxml'.";
@@ -117,6 +127,8 @@ public class TwitterController {
         resetTweetSlotIterators();
 
         ResponseList<Status> melbjvmTweets = TweetReader.getMelbjvmTweets();
+        totalTweets = melbjvmTweets.size();
+        System.out.printf("Retrieved %f tweets\n", totalTweets);
 
         // populate the first tweets
         melbjvmTweets.stream().limit(4).forEachOrdered(uiRefresh);
@@ -152,17 +164,38 @@ public class TwitterController {
             position++;
         }
 
-        Platform.runLater(() -> upcomingTweets.build().forEachOrdered(uiRefresh));
+        Platform.runLater(() -> {
+            Stream.of(tweettext1, tweettext2, tweettext3, tweettext4).forEach(it -> it.setEffect(new GaussianBlur()));
+            upcomingTweets.build().forEachOrdered(uiRefresh);
+            Stream.of(tweettext1, tweettext2, tweettext3, tweettext4).forEach(it -> it.setEffect(null));
+
+            updateControls();
+        });
+
     }
 
     public void previousTweet() {
-        Stream.Builder<Status> upcomingTweets = Stream.builder();
+        List<Status> upcomingTweets = new LinkedList<>();
         int position = 0;
         while (tweetIterator.hasPrevious() && position < 4) {
             upcomingTweets.add(tweetIterator.previous());
             position++;
         }
+        Collections.reverse(upcomingTweets);
 
-        Platform.runLater(() -> upcomingTweets.build().forEachOrdered(uiRefresh));
+        Platform.runLater(() -> {
+            Stream.of(tweettext1, tweettext2, tweettext3, tweettext4).forEach(it -> it.setEffect(new GaussianBlur()));
+            upcomingTweets.stream().forEachOrdered(uiRefresh);
+            Stream.of(tweettext1, tweettext2, tweettext3, tweettext4).forEach(it -> it.setEffect(null));
+
+            updateControls();
+        });
+    }
+
+    private void updateControls() {
+        slider.adjustValue(tweetIterator.nextIndex());
+        System.out.println("Adjusting slider to "+tweetIterator.nextIndex());
+        pageProgress.setProgress(tweetIterator.nextIndex() / totalTweets);
+        System.out.println("Adjusting progress to "+tweetIterator.nextIndex() / totalTweets);
     }
 }
