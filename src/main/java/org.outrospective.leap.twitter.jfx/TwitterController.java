@@ -4,33 +4,30 @@ package org.outrospective.leap.twitter.jfx;
  * You can copy and paste this code into your favorite IDE
  **/
 
-import java.awt.*;
-import java.net.URL;
-import java.util.*;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javafx.collections.ObservableList;
+import javafx.animation.PathTransition;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.image.*;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.shape.HLineTo;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.Path;
+import javafx.util.Duration;
 import org.outrospective.leap.twitter.TweetReader;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.TwitterException;
 
-import static java.lang.System.out;
-import static java.util.Arrays.asList;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.ListIterator;
+import java.util.ResourceBundle;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 
 public class TwitterController {
@@ -93,6 +90,14 @@ public class TwitterController {
     private Label tweettext4; // Value injected by FXMLLoader
 
 
+    // iterators over each of the 4 slots
+    private ListIterator<ImageView> avatars;
+    private ListIterator<Hyperlink> hyperlinks;
+    private ListIterator<Label> tweetTexts;
+
+    private ListIterator<Status> tweetIterator;
+
+
     @FXML // This method is called by the FXMLLoader when initialization is complete
     void initialize() throws TwitterException {
         assert avatar1 != null : "fx:id=\"avatar1\" was not injected: check your FXML file 'twittermockup.fxml'.";
@@ -114,20 +119,55 @@ public class TwitterController {
         assert tweettext4 != null : "fx:id=\"tweettext4\" was not injected: check your FXML file 'twittermockup.fxml'.";
 
         // Initialize your logic here: all @FXML variables will have been injected
-        ListIterator<ImageView> avatars = Arrays.asList(avatar1, avatar2, avatar3, avatar4).listIterator();
-        ListIterator<Hyperlink> hyperlinks = Arrays.asList(handle1, handle2, handle3, handle4).listIterator();
-        ListIterator<Label> tweetTexts = Arrays.asList(tweettext1, tweettext2, tweettext3, tweettext4).listIterator();
+        resetTweetSlotIterators();
 
         ResponseList<Status> melbjvmTweets = TweetReader.getMelbjvmTweets();
-        melbjvmTweets.stream().limit(4).forEachOrdered(tweet -> {
-            Image image = new Image(tweet.getUser().getBiggerProfileImageURL());
-            avatars.next().setImage(image);
 
-            hyperlinks.next().setText(tweet.getUser().getScreenName());
-            tweetTexts.next().setText(tweet.getText());
-        });
+        // populate the first tweets
+        melbjvmTweets.stream().limit(4).forEachOrdered(uiRefresh);
 
-
+        tweetIterator = melbjvmTweets.listIterator();
     }
 
+
+    private void resetTweetSlotIterators() {
+        avatars = Arrays.asList(avatar1, avatar2, avatar3, avatar4).listIterator();
+        hyperlinks = Arrays.asList(handle1, handle2, handle3, handle4).listIterator();
+        tweetTexts = Arrays.asList(tweettext1, tweettext2, tweettext3, tweettext4).listIterator();
+    }
+
+    private Consumer<? super Status> uiRefresh = tweet -> {
+        Image image = new Image(tweet.getUser().getBiggerProfileImageURL());
+        avatars.next().setImage(image);
+
+        hyperlinks.next().setText(tweet.getUser().getScreenName());
+        tweetTexts.next().setText(tweet.getText());
+
+        if (!avatars.hasNext()) { resetTweetSlotIterators(); }
+    };
+
+    // these two methods are terrible ways of updating a JFX UI.  Use ObservableLists instead
+
+    public void nextTweet() {
+        Stream.Builder<Status> upcomingTweets = Stream.builder();
+        int position = 0;
+
+        while (tweetIterator.hasNext() && position < 4) {
+            upcomingTweets.add(tweetIterator.next());
+            position++;
+        }
+
+        Platform.runLater(() -> upcomingTweets.build().forEachOrdered(uiRefresh));
+    }
+
+    public void previousTweet() {
+        Stream.Builder<Status> upcomingTweets = Stream.builder();
+        int position = 0;
+        while (tweetIterator.hasPrevious() && position < 4) {
+            upcomingTweets.add(tweetIterator.previous());
+            position++;
+        }
+
+        Platform.runLater(() -> upcomingTweets.build().forEachOrdered(uiRefresh));
+    }
 }

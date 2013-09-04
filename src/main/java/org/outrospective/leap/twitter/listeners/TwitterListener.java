@@ -2,6 +2,7 @@ package org.outrospective.leap.twitter.listeners;
 
 import com.leapmotion.leap.*;
 import org.outrospective.leap.twitter.TweetReader;
+import org.outrospective.leap.twitter.jfx.TwitterController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import twitter4j.ResponseList;
@@ -15,6 +16,7 @@ import java.util.Optional;
 
 import static java.lang.Math.abs;
 import static java.util.Comparator.naturalOrder;
+import static org.outrospective.leap.twitter.listeners.TwitterListener.GestureDir.*;
 
 /**
  * Listen to Swipes
@@ -25,21 +27,16 @@ import static java.util.Comparator.naturalOrder;
  */
 public class TwitterListener extends Listener {
 
-    private ResponseList<Status> melbjvmTweets;
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private ListIterator<Status> tweeterator;
-    private ThreadLocal<Integer> maxId = new ThreadLocal<>();
+    private final Logger logger = LoggerFactory.getLogger   (this.getClass());
 
-    @Override
-    public void onInit(Controller controller) {
-        try {
-            melbjvmTweets = TweetReader.getMelbjvmTweets();
-            tweeterator = melbjvmTweets.listIterator();
-            logger.debug("Retrieved {} tweets", melbjvmTweets.size());
-        } catch (TwitterException e) {
-            logger.error("Exception hitting twitter", e);
+    private TwitterController javafxController;
 
-        }
+    public TwitterController getJavafxController() {
+        return javafxController;
+    }
+
+    public void setJavafxController(TwitterController javafxController) {
+        this.javafxController = javafxController;
     }
 
     @Override
@@ -50,53 +47,54 @@ public class TwitterListener extends Listener {
 
     @Override
     public void onFrame(Controller controller) {
+        // The frame is what leap motion has seen & includes gestures, hands, fingers, screens, etc
         Frame frame = controller.frame();
-        if (frame.isValid()) {
-            GestureList gestures = frame.gestures();
-            logger.trace("gestures received: {} in frame {}", gestures.count(), frame.id());
-            for (Gesture gesture : gestures) {
-                if (gesture.isValid() && gesture.type() == Gesture.Type.TYPE_SWIPE && gesture.state() == Gesture.State.STATE_STOP) {
-                    SwipeGesture sg = new SwipeGesture(gesture);
-                    Vector direction = sg.direction();
+        GestureList gestures = frame.gestures();
+        
+        for (Gesture gesture : gestures) {
 
-                    logger.trace(gesture.id()+": Swipe is " + direction.toString() + " with magnitude " + direction.magnitude());
-                    logger.trace("Vector.up().dot(direction)       "+Vector.up().dot(direction));
-                    logger.trace("Vector.down().dot(direction)     "+Vector.down().dot(direction));
-                    logger.trace("Vector.left().dot(direction)     "+Vector.left().dot(direction));
-                    logger.trace("Vector.right().dot(direction)    " + Vector.right().dot(direction));
-                    logger.trace("Vector.forward().dot(direction)  "+Vector.forward().dot(direction));
-                    logger.trace("Vector.backward().dot(direction) "+Vector.backward().dot(direction) +"\n");
+            // only interested in frames and gestures that have valid tracking data AND...
+            if (gesture.isValid()
+                    // the gesture type is swipe AND
+                    && gesture.type() == Gesture.Type.TYPE_SWIPE
+                    // the swipe has completed.
+                    // Other states are START & UPDATE - we dont want to repeat this action multiple times for the one swipe
+                    && gesture.state() == Gesture.State.STATE_STOP) {
 
-                    String dir = guess(direction);
-                    logger.info(gesture.id() + " ("+ gesture.state()+"): I think you are swiping "+ dir + " " + direction);
+                // These are Leap Motion classes/methods
+                SwipeGesture sg = new SwipeGesture(gesture);
+                // not a java.util.Vector, a Leap Motion xyz one
+                Vector direction = sg.direction();
 
-                    if (dir.equals("left") || dir.equals("up")) {
-                        if (tweeterator.hasPrevious()) {
-                            Status previous = tweeterator.previous();
-                            logger.info("Previous Tweet: " + previous.getId() + " " + previous.getUser().getScreenName() + " - " + previous.getText());
-                        } else {
-                            logger.info("Beginning of tweets");
-                        }
-                    } else if (dir.equals("right") || dir.equals("down")) {
-                        if (tweeterator.hasNext()) {
-                            Status next = tweeterator.next();
-                            logger.info("Next tweet: " + next.getId() + " " + next.getUser().getScreenName()  + " - " + next.getText());
-                        } else {
-                            logger.info("End of tweets");
-                        }
+                // Look at the vector to find its largest x y z value
+                GestureDir dir = guess(direction);
+                logger.info(gesture.id() + " ("+ gesture.state()+"): You are swiping in "+ dir + " " + direction);
+
+                if (dir.equals(LEFT) || dir.equals(UP)) {
+
+                    if (javafxController != null) {
+                        javafxController.previousTweet();
                     }
 
-
+                } else if (dir.equals(RIGHT) || dir.equals(DOWN)) {
+                    if (javafxController != null) {
+                        javafxController.nextTweet();
+                    }
                 }
+
             }
         }
     }
 
-    private String guess(Vector direction) {
-        if (Vector.zero().equals(direction)) return "empty";
+    enum GestureDir { EMPTY, LEFT, RIGHT, UP, DOWN, FORWARD, BACKWARD}
+
+    private GestureDir guess(Vector direction) {
+        if (Vector.zero().equals(direction)) return EMPTY;
 
         // find the biggest component of the vector
         float[] fromArray = direction.toFloatArray();
+
+        // taking an indulgence with some Java8 streams
         List<Float> floats = Arrays.asList(abs(fromArray[0]), abs(fromArray[1]), abs(fromArray[2]));
         Optional<Float> max = floats.stream().max(naturalOrder());
         int largestComponent = floats.indexOf(max.get());
@@ -104,15 +102,16 @@ public class TwitterListener extends Listener {
         // use the magnitude to determine the direction of the swipe
         switch (largestComponent) {
             case 0:
-                return fromArray[0] < 0 ? "left" : "right";
+                return fromArray[0] < 0 ? LEFT : RIGHT;
             case 1:
-                return fromArray[1] > 0 ? "up" : "down";
+                return fromArray[1] > 0 ? UP : DOWN;
             case 2:
-                return fromArray[2] < 0 ? "forward" : "backward";
+                return fromArray[2] < 0 ? FORWARD : BACKWARD;
         }
 
         throw new IllegalStateException("Unexpected Vector "+direction);
     }
+
 
     @Override
     public void onExit(Controller controller) {

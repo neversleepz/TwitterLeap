@@ -20,7 +20,7 @@ public class AreYouListeningLeap {
 
     }
 
-    private void go() {
+    public void go() {
         // Have the sample listener receive events from the controller
 //        controller.addListener(listener);
         TwitterListener twitterListener = new TwitterListener();
