@@ -9,7 +9,7 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane id="AnchorPane" fx:id="stage" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="562.0" prefWidth="986.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.outrospective.leap.twitter.jfx.TwitterController">
+<AnchorPane id="AnchorPane" fx:id="stage" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="431.0" prefWidth="703.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.outrospective.leap.twitter.jfx.TwitterController">
   <children>
     <Group id="Group1" layoutX="14.0" layoutY="16.0" />
     <HBox fx:id="tweet1" layoutX="14.0" layoutY="15.0" prefHeight="100.0" prefWidth="949.0">
@@ -28,10 +28,10 @@
             </Hyperlink>
           </children>
         </VBox>
-        <Label fx:id="tweettext1" alignment="BASELINE_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="100.0" prefHeight="-1.0" prefWidth="-1.0" text="This is my tweet" textAlignment="LEFT" wrapText="true" HBox.hgrow="ALWAYS" />
+        <Label fx:id="tweettext1" alignment="BASELINE_CENTER" maxHeight="1.7976931348623157E308" maxWidth="-1.0" minHeight="100.0" prefHeight="100.0" prefWidth="600.0" text="This is my tweet" textAlignment="LEFT" wrapText="true" HBox.hgrow="ALWAYS" />
       </children>
     </HBox>
-    <HBox fx:id="tweet2" layoutX="14.0" layoutY="116.0" prefHeight="100.0" prefWidth="949.0">
+    <HBox fx:id="tweet2" layoutX="14.0" layoutY="115.0" prefHeight="100.0" prefWidth="949.0">
       <children>
         <VBox id="AvatarHandle1" alignment="CENTER" spacing="5.0">
           <children>
@@ -43,7 +43,7 @@
             <Hyperlink fx:id="handle2" font="$x1" text="\@neversleepz" underline="false" visited="true" />
           </children>
         </VBox>
-        <Label fx:id="tweettext2" alignment="BASELINE_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="100.0" prefHeight="-1.0" prefWidth="-1.0" style="-fx-background-color:lightgrey&#10;&#10;" text="This is another tweet" textAlignment="LEFT" wrapText="true" HBox.hgrow="ALWAYS" />
+        <Label fx:id="tweettext2" alignment="BASELINE_CENTER" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minHeight="100.0" prefHeight="100.0" prefWidth="600.0" style="-fx-background-color:lightgrey&#10;&#10;" text="This is another tweet" textAlignment="LEFT" wrapText="true" HBox.hgrow="ALWAYS" />
       </children>
     </HBox>
     <HBox id="tweet1" fx:id="tweet3" layoutX="14.0" layoutY="216.0" prefHeight="100.0" prefWidth="949.0">
@@ -58,7 +58,7 @@
             <Hyperlink id="handle1" fx:id="handle3" font="$x1" text="\@neversleepz" underline="false" visited="true" />
           </children>
         </VBox>
-        <Label id="tweettext1" fx:id="tweettext3" alignment="BASELINE_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="100.0" prefHeight="-1.0" prefWidth="-1.0" text="This is my tweet" textAlignment="LEFT" wrapText="true" HBox.hgrow="ALWAYS" />
+        <Label id="tweettext1" fx:id="tweettext3" alignment="BASELINE_CENTER" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minHeight="100.0" prefHeight="-1.0" prefWidth="600.0" text="This is yet another tweet" textAlignment="LEFT" wrapText="true" HBox.hgrow="ALWAYS" />
       </children>
     </HBox>
     <HBox id="tweet2" fx:id="tweet4" layoutX="14.0" layoutY="317.0" prefHeight="100.0" prefWidth="949.0">
@@ -73,7 +73,7 @@
             <Hyperlink id="handle2" fx:id="handle4" font="$x1" text="\@neversleepz" underline="false" visited="true" />
           </children>
         </VBox>
-        <Label id="tweettext2" fx:id="tweettext4" alignment="BASELINE_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="100.0" prefHeight="-1.0" prefWidth="-1.0" style="-fx-background-color:lightgrey&#10;&#10;" text="This is another tweet" textAlignment="LEFT" wrapText="true" HBox.hgrow="ALWAYS" />
+        <Label id="tweettext2" fx:id="tweettext4" alignment="BASELINE_CENTER" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minHeight="100.0" prefHeight="-1.0" prefWidth="600.0" style="-fx-background-color:lightgrey&#10;&#10;" text="This is the last tweet" textAlignment="LEFT" wrapText="true" HBox.hgrow="ALWAYS" />
       </children>
     </HBox>
   </children>
