@@ -27,7 +27,7 @@ import static org.outrospective.leap.twitter.listeners.TwitterListener.GestureDi
  */
 public class TwitterListener extends Listener {
 
-    private final Logger logger = LoggerFactory.getLogger   (this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private TwitterController javafxController;
 
@@ -45,12 +45,13 @@ public class TwitterListener extends Listener {
         logger.debug("Swipe gesture enabled");
     }
 
+
     @Override
     public void onFrame(Controller controller) {
         // The frame is what leap motion has seen & includes gestures, hands, fingers, screens, etc
         Frame frame = controller.frame();
         GestureList gestures = frame.gestures();
-        
+
         for (Gesture gesture : gestures) {
 
             // only interested in frames and gestures that have valid tracking data AND...

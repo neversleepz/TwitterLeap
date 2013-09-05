@@ -26,7 +26,6 @@ public class Main extends Application {
         primaryStage.setTitle("MelbJVM Tweets");
         primaryStage.setScene(new Scene(root, 710, 480));
         primaryStage.show();
-
     }
 
 
