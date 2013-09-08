@@ -6,7 +6,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.outrospective.leap.twitter.AreYouListeningLeap;
 import org.outrospective.leap.twitter.listeners.TwitterListener;
 
 import java.net.URL;
@@ -24,7 +23,7 @@ public class Main extends Application {
         TwitterController twitterController = fxmlLoader.getController();
         twitterListener.setJavafxController(twitterController);
         primaryStage.setTitle("MelbJVM Tweets");
-        primaryStage.setScene(new Scene(root, 710, 480));
+        primaryStage.setScene(new Scene(root));
         primaryStage.show();
     }
 
