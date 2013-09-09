@@ -3,10 +3,7 @@ package org.outrospective.leap.twitter.jfx;
 import javafx.application.Platform;
 import javafx.beans.property.adapter.ReadOnlyJavaBeanIntegerProperty;
 import javafx.beans.property.adapter.ReadOnlyJavaBeanIntegerPropertyBuilder;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.CacheHint;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.effect.GaussianBlur;
@@ -14,7 +11,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import org.outrospective.leap.twitter.TweetReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,14 +18,10 @@ import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.TwitterException;
 
-import java.awt.*;
-import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.util.*;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -233,84 +225,4 @@ public class TwitterController {
         System.out.println("Adjusting progress to "+tweetIterator.nextIndex() / totalTweets.get());
     }
 
-    static class TweetListCell extends ListCell<Status> {
-        private static final org.slf4j.Logger logger = LoggerFactory.getLogger(TweetListCell.class);
-
-        @Override
-        protected void updateItem(Status status, boolean empty) {
-            super.updateItem(status, empty);
-            if (empty) {
-                setGraphic(new Label("??? EMPTY ???"));
-            }
-            if (!empty && status != null) {
-                int spacingBetweenChildren = 20;
-                HBox tweetBox = new HBox();
-                VBox avatarBox = new VBox();
-//                avatarBox.setMinHeight(150);
-                ImageView avatar = new ImageView(status.getUser().getBiggerProfileImageURL());
-                avatar.setCache(true);
-                avatar.setCacheHint(CacheHint.SPEED);
-
-                Hyperlink hyperlink = new Hyperlink(status.getUser().getScreenName());
-                hyperlink.setTooltip(new Tooltip(status.getUser().getName()));
-                hyperlink.setOnAction(actionEvent -> {
-                    visit("http://twitter.com/"+status.getUser().getScreenName());
-                });
-
-                avatarBox.getChildren().addAll(
-                        avatar,
-                        hyperlink
-                );
-                tweetBox.getChildren().addAll(
-                    avatarBox,
-                    new Label(status.getText()+" using "),
-                    makeHyperlink(status)
-                );
-                setGraphic(tweetBox);
-                setPrefHeight(100);
-            }
-        }
-
-        private Hyperlink makeHyperlink(Status status) {
-            HrefStruct hrefStruct = introspectHref(status);
-            Hyperlink hyperlink =
-                    new Hyperlink(hrefStruct.text);
-            hyperlink.setOnAction(actionEvent -> {
-                String url = hrefStruct.url;
-                visit(url);
-            });
-            return hyperlink;
-        }
-
-        // TODO: the next class + method could go in a builder
-        static void visit(String url) {
-            try {
-                Desktop.getDesktop().browse(URI.create(url));
-            } catch (IOException e) {
-                logger.error("Unable to handle click to "+ url, e);
-            }
-        }
-
-        private class HrefStruct {
-            String text;
-            String url;
-        }
-
-        private HrefStruct introspectHref(Status status) {
-            String anchorTag = status.getSource();
-            HrefStruct href = new HrefStruct();
-            int endOfAnchorOpeningTag = anchorTag.indexOf('>')+1;
-            int beginingOfAnchorClosingTag = anchorTag.lastIndexOf('<');
-            if (endOfAnchorOpeningTag != -1 || beginingOfAnchorClosingTag != -1) {
-                href.text = anchorTag.substring(endOfAnchorOpeningTag, beginingOfAnchorClosingTag);
-                Matcher matcher = HREF.matcher(anchorTag);
-                if (matcher.find()) {
-                    href.url = matcher.group(1);
-                }
-            } else {
-                href.text = anchorTag;
-            }
-            return href;
-        }
-    }
 }

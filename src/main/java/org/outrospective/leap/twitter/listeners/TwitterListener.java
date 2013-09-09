@@ -1,17 +1,12 @@
 package org.outrospective.leap.twitter.listeners;
 
 import com.leapmotion.leap.*;
-import org.outrospective.leap.twitter.TweetReader;
 import org.outrospective.leap.twitter.jfx.TwitterController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import twitter4j.ResponseList;
-import twitter4j.Status;
-import twitter4j.TwitterException;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Optional;
 
 import static java.lang.Math.abs;
@@ -19,7 +14,7 @@ import static java.util.Comparator.naturalOrder;
 import static org.outrospective.leap.twitter.listeners.TwitterListener.GestureDir.*;
 
 /**
- * Listen to Swipes
+ * Listen to Swipes with the Leap controller
  *
  * User: kon
  * Date: 25/08/13
