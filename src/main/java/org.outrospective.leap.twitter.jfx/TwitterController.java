@@ -190,10 +190,7 @@ public class TwitterController {
         }
 
         Platform.runLater(() -> {
-            // TODO: remove the gaussian blur - it's too slow
-            Stream.of(tweettext1, tweettext2, tweettext3, tweettext4).forEach(it -> it.setEffect(new GaussianBlur()));
             upcomingTweets.build().forEachOrdered(uiRefresh);
-            Stream.of(tweettext1, tweettext2, tweettext3, tweettext4).forEach(it -> it.setEffect(null));
 
             updateControls();
         });
@@ -210,9 +207,7 @@ public class TwitterController {
         Collections.reverse(upcomingTweets);
 
         Platform.runLater(() -> {
-            Stream.of(tweettext1, tweettext2, tweettext3, tweettext4).forEach(it -> it.setEffect(new GaussianBlur()));
             upcomingTweets.stream().forEachOrdered(uiRefresh);
-            Stream.of(tweettext1, tweettext2, tweettext3, tweettext4).forEach(it -> it.setEffect(null));
 
             updateControls();
         });
