@@ -3,10 +3,11 @@ package org.outrospective.leap.twitter.jfx;
 import javafx.application.Platform;
 import javafx.beans.property.adapter.ReadOnlyJavaBeanIntegerProperty;
 import javafx.beans.property.adapter.ReadOnlyJavaBeanIntegerPropertyBuilder;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.Label;
-import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -20,7 +21,7 @@ import twitter4j.TwitterException;
 
 import java.net.URL;
 import java.util.*;
-import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -102,8 +103,6 @@ public class TwitterController {
     @FXML // fx:id="tweettext4"
     private Label tweettext4; // Value injected by FXMLLoader
 
-
-
     // iterators over each of the 4 slots
     private ListIterator<ImageView> avatars;
     private ListIterator<Hyperlink> hyperlinks;
@@ -138,27 +137,59 @@ public class TwitterController {
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
-    void initialize() throws TwitterException, InterruptedException, NoSuchMethodException {
+    void initialize() throws TwitterException, ExecutionException, InterruptedException {
         isFxmlInjectedPreconditions();
 
         // Initialize your logic here: all @FXML variables will have been injected
-        resetTweetSlotIterators();
 
-        // XXX: this blocks the UI from appearing.  Should be in an onLoaded kind of event thing.
-        ResponseList<Status> melbjvmTweets = TweetReader.getMelbjvmTweets();
-
-        totalTweets = ReadOnlyJavaBeanIntegerPropertyBuilder.create().bean(melbjvmTweets).name("size").getter("size").build();
-        logger.info("Retrieved {} tweets", totalTweets.get());
-
-        tweetCount.textProperty().bind(totalTweets.asString());
-
-        textList.setItems(observableList(melbjvmTweets));
         textList.setCellFactory(statusListView -> new TweetListCell());
 
-        // populate the first tweets
-        melbjvmTweets.stream().limit(4).forEachOrdered(uiRefresh);
+        Task<ObservableList<Status>> task = new Task<ObservableList<Status>>() {
+            @Override
+            protected ObservableList<Status> call() throws Exception {
+                updateMessage("Loading MelbJVM Tweets");
+                ResponseList<Status> melbjvmTweets = TweetReader.getMelbjvmTweets();
+                if (isCancelled()) {
+                    updateMessage("Cancelled");
+                    return FXCollections.emptyObservableList();
+                } else {
+                    updateMessage("Loaded " + melbjvmTweets.size() + " tweets");
+                    return observableList(melbjvmTweets);
+                }
+            }
 
-        tweetIterator = melbjvmTweets.listIterator();
+            // ??? This is now binding the task to the UI.  Should this go back to being an outside thread
+            @Override
+            protected void succeeded() {
+                super.succeeded();
+
+                try {
+                    totalTweets = ReadOnlyJavaBeanIntegerPropertyBuilder.create()
+                            .bean(textList.getItems())
+                            .name("size")
+                            .getter("size").build();
+                } catch (NoSuchMethodException ignored) {
+                }
+
+                logger.info("Retrieved {} tweets", totalTweets.get());
+                tweetCount.textProperty().bind(totalTweets.asString());
+
+                ObservableList<Status> items = textList.itemsProperty().get();
+                items.stream().limit(4).forEachOrdered(uiRefresh);
+                tweetIterator = items.listIterator();
+            }
+        };
+
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+
+        textList.itemsProperty().bind(task.valueProperty());
+
+        // populate the first tweets
+        resetTweetSlotIterators();
+
+
     }
 
 
@@ -178,8 +209,7 @@ public class TwitterController {
         if (!avatars.hasNext()) { resetTweetSlotIterators(); }
     };
 
-    // these two methods are terrible ways of updating a JFX UI.  Use ObservableLists instead
-
+    // TODO: these two methods are terrible ways of updating a JFX UI.  Use ObservableLists instead
     public void nextTweet() {
         Stream.Builder<Status> upcomingTweets = Stream.builder();
         int position = 0;
@@ -215,9 +245,9 @@ public class TwitterController {
 
     private void updateControls() {
         slider.adjustValue(tweetIterator.nextIndex());
-        System.out.println("Adjusting slider to "+tweetIterator.nextIndex());
-        pageProgress.setProgress(tweetIterator.nextIndex() / totalTweets.get());
-        System.out.println("Adjusting progress to "+tweetIterator.nextIndex() / totalTweets.get());
+        System.out.println("Adjusting slider to " + tweetIterator.nextIndex());
+        pageProgress.setProgress((float) tweetIterator.nextIndex() / totalTweets.get());
+        System.out.println("Adjusting progress to " + (float) tweetIterator.nextIndex() / totalTweets.get());
     }
 
 }

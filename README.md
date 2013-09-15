@@ -2,6 +2,11 @@ TwitterLeap
 ===========
 First Leap Integration App uses gestures to browse tweets
 
+Requirements
+============
+JDK 8 - I've used build 104 from http://jdk8.java.net
+Leap Controller & the dll/so/dylib files for your platform
+
 *Important*
 ===========
 Set your library path system property when running the app to point to
