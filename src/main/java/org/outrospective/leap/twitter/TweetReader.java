@@ -18,4 +18,8 @@ public class TweetReader {
     public static ResponseList<Status> getMelbjvmTweets() throws TwitterException {
         return twitter.getUserTimeline("melbjvm");
     }
+
+    public static ResponseList<Status> getMyTweets(int page) throws TwitterException {
+        return twitter.getHomeTimeline(new Paging(page));
+    }
 }

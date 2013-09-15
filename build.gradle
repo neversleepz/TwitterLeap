@@ -21,7 +21,13 @@ dependencies {
     compile 'org.slf4j:slf4j-simple:1.7.5'
 
     compile 'org.twitter4j:twitter4j-core:[3.0,)'
+    compile 'org.codehaus.groovy:groovy:2.1.7'
+
+    testCompile 'junit:junit:4.11'
 }
 
-mainClassName="org.outrospective.leap.twitter.AreYouListeningLeap"
+mainClassName="org.outrospective.leap.twitter.jfx.Main"
 
+run {
+    systemProperties['java.library.path']='leaplib'
+}

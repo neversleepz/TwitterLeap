@@ -1,14 +1,12 @@
 package org.outrospective.jfx;
 
 import javafx.scene.control.Hyperlink;
-import org.outrospective.leap.twitter.jfx.TwitterController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Objects;
 
 /**
  * User: kon
