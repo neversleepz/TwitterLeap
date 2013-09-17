@@ -69,12 +69,12 @@ public class TwitterListener extends Listener {
                 if (dir.equals(LEFT) || dir.equals(UP)) {
 
                     if (javafxController != null) {
-                        javafxController.previousTweet();
+//                        javafxController.previousTweet();
                     }
 
                 } else if (dir.equals(RIGHT) || dir.equals(DOWN)) {
                     if (javafxController != null) {
-                        javafxController.nextTweet();
+//                        javafxController.nextTweet();
                     }
                 }
 
